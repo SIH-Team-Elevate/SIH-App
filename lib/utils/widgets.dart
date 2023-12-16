@@ -35,9 +35,8 @@ void showSnakbar(context,color,message){
 }
 
 void showAlertDialog(BuildContext context,List<Widget> actions,String body){
-  showCupertinoDialog(
-                              context: context,
-                              builder: (context) => CupertinoAlertDialog(
+  showDialog(context: context,
+                              builder: (context) => AlertDialog(
                                 content: Text(
                                   body,
                                   style: GoogleFonts.poppins(fontSize: 17),
