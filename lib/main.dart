@@ -47,7 +47,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: loggedIn ? MovingPage() : AuthPage(),
+      home:  ProfilePage(),
     );
   }
 }

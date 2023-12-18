@@ -210,7 +210,8 @@ class _MovingPageState extends State<MovingPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                 ),
-              )
+              ),
+              SizedBox(height: 30,)
             ],
           ),
         ),

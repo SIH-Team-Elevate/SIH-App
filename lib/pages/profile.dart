@@ -26,6 +26,8 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
   }
 
+  bool enabled = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,16 +41,21 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Row(
+                Row(
                   children: [
-                    Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
+                    InkWell(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.black,
+                      ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 10,
                     ),
-                    Text(
+                    const Text(
                       "Profile",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
@@ -58,7 +65,31 @@ class _ProfilePageState extends State<ProfilePage> {
                 const SizedBox(
                   height: 30,
                 ),
-                const Text("Driver Profile"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Driver Profile"),
+                    enabled
+                        ? ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                enabled = false;
+                              });
+                            },
+                            child: const Text("Done"))
+                        : InkWell(
+                            onTap: () {
+                              setState(() {
+                                enabled = true;
+                              });
+                            },
+                            child: const Icon(
+                              Icons.edit_outlined,
+                              color: Color(0xff4A4A4A),
+                            ),
+                          )
+                  ],
+                ),
                 const SizedBox(
                   height: 10,
                 ),
@@ -84,25 +115,30 @@ class _ProfilePageState extends State<ProfilePage> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Name",
                                   style: TextStyle(
                                     color: Color(0xff4A4A4A),
                                   ),
                                 ),
-                                Text(
-                                  data["name"],
-                                  style: TextStyle(
-                                      color: Color(0xff101A29),
-                                      fontWeight: FontWeight.w500),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 130,
+                                  height: 30,
+                                  child: TextFormField(
+                                    enabled: enabled,
+                                    initialValue: "njbn",
+                                    decoration: const InputDecoration(
+                                      disabledBorder: InputBorder.none,
+                                    ),
+                                    style: const TextStyle(
+                                        color: Color(0xff101A29),
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ],
                             ),
                             Expanded(child: Container()),
-                            const Icon(
-                              Icons.edit_outlined,
-                              color: Color(0xff4A4A4A),
-                            )
                           ],
                         ),
                       ),
@@ -122,28 +158,32 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(
                               width: 15,
                             ),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Driver ID",
                                   style: TextStyle(
                                     color: Color(0xff4A4A4A),
                                   ),
                                 ),
-                                Text(
-                                  "MH-kfkhks-huwfh",
-                                  style: TextStyle(
-                                      color: Color(0xff101A29),
-                                      fontWeight: FontWeight.w500),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 130,
+                                  height: 30,
+                                  child: TextFormField(
+                                    enabled: enabled,
+                                    initialValue: "njbn",
+                                    decoration: const InputDecoration(
+                                        disabledBorder: InputBorder.none),
+                                    style: const TextStyle(
+                                        color: Color(0xff101A29),
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ],
                             ),
                             Expanded(child: Container()),
-                            const Icon(
-                              Icons.edit_outlined,
-                              color: Color(0xff4A4A4A),
-                            )
                           ],
                         ),
                       ),
@@ -163,28 +203,32 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(
                               width: 15,
                             ),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Age",
                                   style: TextStyle(
                                     color: Color(0xff4A4A4A),
                                   ),
                                 ),
-                                Text(
-                                  "36",
-                                  style: TextStyle(
-                                      color: Color(0xff101A29),
-                                      fontWeight: FontWeight.w500),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 130,
+                                  height: 30,
+                                  child: TextFormField(
+                                    enabled: enabled,
+                                    initialValue: "njbn",
+                                    decoration: const InputDecoration(
+                                        disabledBorder: InputBorder.none),
+                                    style: const TextStyle(
+                                        color: Color(0xff101A29),
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ],
                             ),
                             Expanded(child: Container()),
-                            const Icon(
-                              Icons.edit_outlined,
-                              color: Color(0xff4A4A4A),
-                            )
                           ],
                         ),
                       ),
@@ -204,28 +248,32 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(
                               width: 15,
                             ),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Address",
                                   style: TextStyle(
                                     color: Color(0xff4A4A4A),
                                   ),
                                 ),
-                                Text(
-                                  "Pulsar Road",
-                                  style: TextStyle(
-                                      color: Color(0xff101A29),
-                                      fontWeight: FontWeight.w500),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 130,
+                                  height: 30,
+                                  child: TextFormField(
+                                    enabled: enabled,
+                                    initialValue: "njbn",
+                                    decoration: const InputDecoration(
+                                        disabledBorder: InputBorder.none),
+                                    style: const TextStyle(
+                                        color: Color(0xff101A29),
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ],
                             ),
                             Expanded(child: Container()),
-                            const Icon(
-                              Icons.edit_outlined,
-                              color: Color(0xff4A4A4A),
-                            )
                           ],
                         ),
                       ),
@@ -245,28 +293,32 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(
                               width: 15,
                             ),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Blood Group",
                                   style: TextStyle(
                                     color: Color(0xff4A4A4A),
                                   ),
                                 ),
-                                Text(
-                                  "A+",
-                                  style: TextStyle(
-                                      color: Color(0xff101A29),
-                                      fontWeight: FontWeight.w500),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 130,
+                                  height: 30,
+                                  child: TextFormField(
+                                    enabled: enabled,
+                                    initialValue: "njbn",
+                                    decoration: const InputDecoration(
+                                        disabledBorder: InputBorder.none),
+                                    style: const TextStyle(
+                                        color: Color(0xff101A29),
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ],
                             ),
                             Expanded(child: Container()),
-                            const Icon(
-                              Icons.edit_outlined,
-                              color: Color(0xff4A4A4A),
-                            )
                           ],
                         ),
                       ),
@@ -286,28 +338,32 @@ class _ProfilePageState extends State<ProfilePage> {
                             const SizedBox(
                               width: 15,
                             ),
-                            const Column(
+                            Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
+                                const Text(
                                   "Phone Number",
                                   style: TextStyle(
                                     color: Color(0xff4A4A4A),
                                   ),
                                 ),
-                                Text(
-                                  "+91 7894561231",
-                                  style: TextStyle(
-                                      color: Color(0xff101A29),
-                                      fontWeight: FontWeight.w500),
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 130,
+                                  height: 30,
+                                  child: TextFormField(
+                                    enabled: enabled,
+                                    initialValue: "njbn",
+                                    decoration: const InputDecoration(
+                                        disabledBorder: InputBorder.none),
+                                    style: const TextStyle(
+                                        color: Color(0xff101A29),
+                                        fontWeight: FontWeight.w500),
+                                  ),
                                 ),
                               ],
                             ),
                             Expanded(child: Container()),
-                            const Icon(
-                              Icons.edit_outlined,
-                              color: Color(0xff4A4A4A),
-                            )
                           ],
                         ),
                       ),
@@ -649,30 +705,30 @@ class _ProfilePageState extends State<ProfilePage> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Center(child: Text("ALERT")),
+                            title: const Center(child: Text("ALERT")),
                             content: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text("Are you sure to Log Out?"),
+                                const Text("Are you sure to Log Out?"),
                                 GestureDetector(
                                   onTap: () {
                                     ApiService apiService = ApiService();
                                     apiService.logout(context);
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: const BoxDecoration(
                                         color: Color(0xffD7323D),
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(5))),
-                                    child: Center(
+                                    child: const Center(
                                         child: Text(
                                       "LOG OUT",
                                       style: TextStyle(color: Colors.white),
                                     )),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 15,
                                 ),
                                 GestureDetector(
@@ -680,13 +736,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                     Navigator.pop(context);
                                   },
                                   child: Container(
-                                    padding: EdgeInsets.all(10),
+                                    padding: const EdgeInsets.all(10),
                                     decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: Color(0xff101A29)),
-                                        borderRadius: BorderRadius.all(
+                                            color: const Color(0xff101A29)),
+                                        borderRadius: const BorderRadius.all(
                                             Radius.circular(5))),
-                                    child: Center(child: Text("CANCEL")),
+                                    child: const Center(child: Text("CANCEL")),
                                   ),
                                 ),
                               ],

@@ -77,6 +77,7 @@ class _AuthPageState extends State<AuthPage> {
               padding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20),
               child: Column(
                 children: [
+
                  
                     const Row(
                   children: [
@@ -94,7 +95,7 @@ class _AuthPageState extends State<AuthPage> {
                     )
                   ],
                 ),
-                SizedBox(height: 20,),
+                SizedBox(height: 60,),
                   Container(
                     height: 500,
                     padding: const EdgeInsets.all(10),
