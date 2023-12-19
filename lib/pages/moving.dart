@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:sih_app/map_provider.dart';
 import 'package:sih_app/pages/loading.dart';
 import 'package:sih_app/pages/map.dart';
 import 'package:sih_app/pages/profile.dart';
@@ -15,6 +17,13 @@ class MovingPage extends StatefulWidget {
 class _MovingPageState extends State<MovingPage> {
   @override
   Widget build(BuildContext context) {
+    bool loading = context.watch<MapProvider>().loading;
+    String instructs = context.watch<MapProvider>().instructions;
+    double time = context.watch<MapProvider>().time_left;
+    double distance = context.watch<MapProvider>().distance;
+    int tp = context.watch<MapProvider>().total_points;
+    int idx= context.watch<MapProvider>().idx;
+
     return Scaffold(
       backgroundColor: const Color(0xffEFEFEF),
       body: SafeArea(
@@ -62,7 +71,7 @@ class _MovingPageState extends State<MovingPage> {
                       width: 20,
                     ),
                     Text(
-                      "Burgundy cres",
+                      instructs,
                       style: GoogleFonts.poppins(
                           color: Colors.white, fontWeight: FontWeight.bold),
                     )
@@ -79,18 +88,18 @@ class _MovingPageState extends State<MovingPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Column(
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "11 min",
+                          "${time ~/ 60} min",
                           style: TextStyle(
                               color: Color(
                                 0xff101A29,
                               ),
                               fontWeight: FontWeight.w600),
                         ),
-                        Text("2.7 km . 4:35 PM"),
+                        Text("${distance / 1000.truncate()} km . 4:35 PM"),
                       ],
                     ),
                     Container(
@@ -147,7 +156,10 @@ class _MovingPageState extends State<MovingPage> {
                               ),
                               GestureDetector(
                                 onTap: () {
+                                  if(idx==tp){
+
                                   nextScreenReplace(context, LoadingPage());
+                                  }
                                 },
                                 child: Container(
                                   width:
@@ -172,8 +184,8 @@ class _MovingPageState extends State<MovingPage> {
                                       ],
                                     ),
                                   ),
-                                  decoration: const BoxDecoration(
-                                      color: Color(0xff101A29),
+                                  decoration:  BoxDecoration(
+                                      color:tp==idx? Color(0xff101A29):Colors.grey,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(5))),
                                 ),

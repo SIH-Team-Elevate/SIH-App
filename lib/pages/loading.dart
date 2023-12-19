@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -9,15 +11,34 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
+  late Timer timer;
+  int time = 0;
+
+  @override
+  void initState() {
+    timer = Timer.periodic(const Duration(milliseconds: 1000), (timer) {
+      if (time < 100) {
+        setState(() {
+
+        time = time + 10;
+        });
+      } else {
+        timer.cancel();
+      }
+      
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffEFEFEF),
       body: SafeArea(
           child: SingleChildScrollView(
-            child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20),
-                  child: Column(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20),
+          child: Column(
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,10 +72,25 @@ class _LoadingPageState extends State<LoadingPage> {
                 width: MediaQuery.of(context).size.width - 40,
                 height: 30,
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Colors.white,
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(8),
                       bottomRight: Radius.circular(8)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      height: 30,
+                      width: MediaQuery.of(context).size.width*(time/100)-40,
+                      decoration: BoxDecoration(
+                      color: Colors.green,
+                      borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(8),
+                          bottomRight: Radius.circular(8)),
+                    ),
+                    ),
+                    Expanded(child: Container(color: Colors.white,))
+                  ],
                 ),
               ),
               SizedBox(
@@ -218,9 +254,9 @@ class _LoadingPageState extends State<LoadingPage> {
                 ),
               )
             ],
-                  ),
-                ),
-          )),
+          ),
+        ),
+      )),
     );
   }
 

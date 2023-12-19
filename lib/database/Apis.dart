@@ -12,7 +12,7 @@ class ApiService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? token = prefs.getString('x-auth-token');
-    return token!;
+    return "";
   }
 
   Future<bool> login(

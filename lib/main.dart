@@ -1,19 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:provider/provider.dart';
+
 import 'package:sih_app/database/Apis.dart';
-import 'package:sih_app/pages/authPage.dart';
-import 'package:sih_app/pages/help.dart';
-import 'package:sih_app/pages/home.dart';
-import 'package:sih_app/pages/loading.dart';
-import 'package:sih_app/pages/map.dart';
+import 'package:sih_app/map_provider.dart';
 import 'package:sih_app/pages/moving.dart';
-import 'package:sih_app/pages/profile.dart';
 
 void main() {
-  SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context) => MapProvider()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -42,12 +38,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Insien E-commerce',
+      title: 'Elevate',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home:  MovingPage(),
+      home: MovingPage(),
     );
   }
 }

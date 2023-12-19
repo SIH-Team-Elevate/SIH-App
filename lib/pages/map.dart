@@ -1,11 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:provider/provider.dart';
 import 'package:sih_app/database/maps_api.dart';
+import 'package:sih_app/map_provider.dart';
+import 'package:sih_app/utils/socket_methods.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -22,10 +26,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   List listofpoints = [];
   List<LatLng> points = [];
   bool loading = true;
-  List<Map<String, dynamic>> instructions = [];
-  int time = 0;
+  List<dynamic> instructions = [];
+  double time = 0;
   late Timer timer;
-  int distance = 0;
+  double distance = 0;
+  SocketMethods socketMethods = SocketMethods();
   int idx = 0;
   List<int> list_idx = [0];
   int pre_index = 0;
@@ -36,7 +41,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
       var seg = data['features'][0]['properties']['segments'][0];
-
+      print(res.body);
       setState(() {
         time = seg['duration'];
         distance = seg['distance'];
@@ -44,6 +49,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         listofpoints = data['features'][0]['geometry']['coordinates'];
         points = listofpoints.map((e) => LatLng(e[1], e[0])).toList();
         loading = false;
+
         for (var i = 0; i < instructions.length - 1; i++) {
           var a = instructions[i]['way_points'][1];
           list_idx.add(a);
@@ -122,14 +128,35 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     return low;
   }
 
+  final flutterTts = FlutterTts();
+  Future<void> systemSpeak(String content) async {
+    await flutterTts.speak(content);
+  }
+
   @override
   void initState() {
     getCoordniates().then((value) => {
-          timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
-            setState(() {
-              idx++;
-              pre_index = findinsertIndex(idx);
-            });
+          timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+            socketMethods.sendlocation(
+                points[idx].latitude, points[idx].longitude, "njbjbjka");
+            idx++;
+            if (idx > points.length - 1) {
+              timer.cancel();
+              return;
+            }
+            print(idx);
+            Provider.of<MapProvider>(context, listen: false)
+                .changeIndex(idx, points.length - 1);
+            var i = findinsertIndex(idx);
+
+            if (pre_index != i && i <= instructions.length - 1) {
+              pre_index = i;
+              Provider.of<MapProvider>(context, listen: false).setInstruction(
+                  instructions[pre_index]["instruction"], time, distance);
+              systemSpeak(instructions[pre_index]["instruction"]);
+            }
+            setState(() {});
+            Provider.of<MapProvider>(context, listen: false).setLoading();
           })
         });
     super.initState();
@@ -142,14 +169,15 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
         ? Container(
             height: 400,
             width: MediaQuery.of(context).size.width - 40,
-            child: Center(child: CircularProgressIndicator()))
+            child: const Center(child: CircularProgressIndicator()))
         : Container(
             height: 400,
             width: MediaQuery.of(context).size.width - 40,
             child: FlutterMap(
               options: MapOptions(
-                  initialCenter: const LatLng(28.54,
-                      77.1928), // Center of the map (initially set to (0,0))
+                  initialCenter: loading
+                      ? LatLng(0, 0)
+                      : points[(points.length / 2).round()],
                   initialZoom: 15.0,
                   interactiveFlags: ~InteractiveFlag.rotate,
                   keepAlive: true // Initial zoom level
@@ -220,6 +248,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                         child: const Icon(
                           Icons.location_on,
                           color: Colors.red,
+                          size: 45.0,
+                        ),
+                      ),
+                    ),
+                    Marker(
+                      width: 45.0,
+                      height: 45.0,
+                      point: loading
+                          ? const LatLng(0, 0)
+                          : points[
+                              idx], // Example landmark coordinates (San Francisco)
+                      child: Container(
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.blue,
                           size: 45.0,
                         ),
                       ),
