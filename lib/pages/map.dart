@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -20,18 +21,37 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   MapController mapController = MapController();
   List listofpoints = [];
   List<LatLng> points = [];
-  getCoordniates() async {
-    var res = await http.get(getRouteUrl("77.1928,28.54", "77.1928,28.5357"));
+  bool loading = true;
+  List<Map<String, dynamic>> instructions = [];
+  int time = 0;
+  late Timer timer;
+  int distance = 0;
+  int idx = 0;
+  List<int> list_idx = [0];
+  int pre_index = 0;
+
+  Future<bool> getCoordniates() async {
+    var res = await http.get(getRouteUrl("77.1728,28.5257", "77.1828,28.5257"));
 
     if (res.statusCode == 200) {
       var data = jsonDecode(res.body);
+      var seg = data['features'][0]['properties']['segments'][0];
 
       setState(() {
+        time = seg['duration'];
+        distance = seg['distance'];
+        instructions = seg['steps'];
         listofpoints = data['features'][0]['geometry']['coordinates'];
         points = listofpoints.map((e) => LatLng(e[1], e[0])).toList();
-        print(points);
+        loading = false;
+        for (var i = 0; i < instructions.length - 1; i++) {
+          var a = instructions[i]['way_points'][1];
+          list_idx.add(a);
+        }
+        print(res.body);
       });
     }
+    return true;
   }
 
   void _animatedMapMove(LatLng destLocation, double destZoom) {
@@ -88,76 +108,131 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     controller.forward();
   }
 
-  @override
-  void initState() {
-    getCoordniates();
-    super.initState();
+  int findinsertIndex(int target) {
+    int low = 0;
+    int high = list_idx.length;
+    while (low < high) {
+      int mid = (low + high) ~/ 2;
+      if (list_idx[mid] < target) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    return low;
   }
 
   @override
+  void initState() {
+    getCoordniates().then((value) => {
+          timer = Timer.periodic(Duration(milliseconds: 500), (timer) {
+            setState(() {
+              idx++;
+              pre_index = findinsertIndex(idx);
+            });
+          })
+        });
+    super.initState();
+  }
+
+  // points==[]?LatLng(0, 0):points[(points.length/2).round()],
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 400,
-      width: MediaQuery.of(context).size.width - 40,
-      child: FlutterMap(
-        options: MapOptions(
-            initialCenter: const LatLng(
-                28.54, 77.1928), // Center of the map (initially set to (0,0))
-            initialZoom: 15.0,
-            interactiveFlags: ~InteractiveFlag.rotate,
-            keepAlive: true // Initial zoom level
+    return loading
+        ? Container(
+            height: 400,
+            width: MediaQuery.of(context).size.width - 40,
+            child: Center(child: CircularProgressIndicator()))
+        : Container(
+            height: 400,
+            width: MediaQuery.of(context).size.width - 40,
+            child: FlutterMap(
+              options: MapOptions(
+                  initialCenter: const LatLng(28.54,
+                      77.1928), // Center of the map (initially set to (0,0))
+                  initialZoom: 15.0,
+                  interactiveFlags: ~InteractiveFlag.rotate,
+                  keepAlive: true // Initial zoom level
+                  ),
+              nonRotatedChildren: [
+                RichAttributionWidget(
+                  attributions: [
+                    TextSourceAttribution(
+                      'OpenStreetMap contributors',
+                      onTap: () {},
+                    ),
+                  ],
+                ),
+              ],
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  userAgentPackageName: 'com.example.insien',
+                  tileUpdateTransformer: _animatedMoveTileUpdateTransformer,
+                ),
+                MarkerLayer(
+                  markers: [
+                    Marker(
+                      width: 45.0,
+                      height: 45.0,
+                      point: const LatLng(28.5457,
+                          77.1928), // Example landmark coordinates (San Francisco)
+                      child: Container(
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.yellow,
+                          size: 45.0,
+                        ),
+                      ),
+                    ),
+                    Marker(
+                      width: 45.0,
+                      height: 45.0,
+                      point: const LatLng(28.5357,
+                          77.1928), // Example landmark coordinates (San Francisco)
+                      child: Container(
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.yellow,
+                          size: 45.0,
+                        ),
+                      ),
+                    ),
+                    Marker(
+                      width: 45.0,
+                      height: 45.0,
+                      point: const LatLng(28.5257,
+                          77.1828), // Example landmark coordinates (San Francisco)
+                      child: Container(
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.yellow,
+                          size: 45.0,
+                        ),
+                      ),
+                    ),
+                    Marker(
+                      width: 45.0,
+                      height: 45.0,
+                      point: const LatLng(28.5257,
+                          77.1728), // Example landmark coordinates (San Francisco)
+                      child: Container(
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 45.0,
+                        ),
+                      ),
+                    ),
+                    // Add more markers for other landmarks here...
+                  ],
+                ),
+                PolylineLayer(polylines: [
+                  Polyline(points: points, color: Colors.blue, strokeWidth: 5)
+                ])
+              ],
             ),
-        nonRotatedChildren: [
-          RichAttributionWidget(
-            attributions: [
-              TextSourceAttribution(
-                'OpenStreetMap contributors',
-                onTap: () {},
-              ),
-            ],
-          ),
-        ],
-        children: [
-          TileLayer(
-            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-            userAgentPackageName: 'com.example.insien',
-            tileUpdateTransformer: _animatedMoveTileUpdateTransformer,
-          ),
-          MarkerLayer(
-            markers: [
-              Marker(
-                width: 45.0,
-                height: 45.0,
-                point: const LatLng(28.5457,
-                    77.1928), // Example landmark coordinates (San Francisco)
-                child: Container(
-                  child: const Icon(
-                    Icons.location_on,
-                    color: Colors.red,
-                    size: 45.0,
-                  ),
-                ),
-              ),
-              Marker(
-                width: 45.0,
-                height: 45.0,
-                point: const LatLng(28.5357,
-                    77.1928), // Example landmark coordinates (San Francisco)
-                child: Container(
-                  child: const Icon(
-                    Icons.location_on,
-                    color: Colors.red,
-                    size: 45.0,
-                  ),
-                ),
-              ),
-              // Add more markers for other landmarks here...
-            ],
-          ),
-          PolylineLayer(polylines: [Polyline(points: points,color: Colors.blue,strokeWidth: 5)])
-        ],
-      ),
-    );
+          );
   }
 }
 

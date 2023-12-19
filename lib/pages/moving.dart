@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sih_app/pages/loading.dart';
 import 'package:sih_app/pages/map.dart';
 import 'package:sih_app/pages/profile.dart';
 import 'package:sih_app/utils/widgets.dart';
@@ -97,7 +98,8 @@ class _MovingPageState extends State<MovingPage> {
                       width: 40,
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.black),
-                          borderRadius: const BorderRadius.all(Radius.circular(20))),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(20))),
                       child: const Icon(
                         Icons.mic_none_outlined,
                         color: Color(0xff4A4A4A),
@@ -143,31 +145,38 @@ class _MovingPageState extends State<MovingPage> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width - 100,
-                                padding: const EdgeInsets.all(8),
-                                child: const Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        "REACHED",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
+                              GestureDetector(
+                                onTap: () {
+                                  nextScreenReplace(context, LoadingPage());
+                                },
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  padding: const EdgeInsets.all(8),
+                                  child: const Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "REACHED",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                  decoration: const BoxDecoration(
+                                      color: Color(0xff101A29),
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5))),
                                 ),
-                                decoration: const BoxDecoration(
-                                    color: Color(0xff101A29),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))),
                               )
                             ],
                           ),
@@ -211,7 +220,9 @@ class _MovingPageState extends State<MovingPage> {
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                 ),
               ),
-              SizedBox(height: 30,)
+              SizedBox(
+                height: 30,
+              )
             ],
           ),
         ),
@@ -264,7 +275,8 @@ class _MovingPageState extends State<MovingPage> {
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                         border: Border.all(color: const Color(0xff101A29)),
-                        borderRadius: const BorderRadius.all(Radius.circular(5))),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5))),
                     child: const Center(child: Text("HELP & SUPPORT")),
                   ),
                 ),
