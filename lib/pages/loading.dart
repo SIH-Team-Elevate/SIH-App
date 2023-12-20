@@ -2,6 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:sih_app/pages/help.dart';
+import 'package:sih_app/pages/moving.dart';
+import 'package:sih_app/pages/profile.dart';
+import 'package:sih_app/utils/socket_methods.dart';
+import 'package:sih_app/utils/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoadingPage extends StatefulWidget {
   const LoadingPage({super.key});
@@ -13,19 +19,20 @@ class LoadingPage extends StatefulWidget {
 class _LoadingPageState extends State<LoadingPage> {
   late Timer timer;
   int time = 0;
+  SocketMethods _socketMethods = SocketMethods();
 
   @override
   void initState() {
     timer = Timer.periodic(const Duration(milliseconds: 1000), (timer) {
+       _socketMethods.sendLoadingData(time.toDouble());
       if (time < 100) {
+       
         setState(() {
-
-        time = time + 10;
+          time = time + 10;
         });
       } else {
         timer.cancel();
       }
-      
     });
     super.initState();
   }
@@ -37,7 +44,7 @@ class _LoadingPageState extends State<LoadingPage> {
       body: SafeArea(
           child: SingleChildScrollView(
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 20).copyWith(top: 20),
           child: Column(
             children: [
               Row(
@@ -48,16 +55,20 @@ class _LoadingPageState extends State<LoadingPage> {
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.w500, fontSize: 18),
                   ),
-                  Icon(Icons.person_2_outlined)
+                  InkWell(
+                      onTap: () {
+                        nextScreen(context, ProfilePage());
+                      },
+                      child: const Icon(Icons.person_2_outlined))
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 25,
               ),
               Container(
                 width: MediaQuery.of(context).size.width - 40,
                 height: 250,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(8),
@@ -71,7 +82,7 @@ class _LoadingPageState extends State<LoadingPage> {
               Container(
                 width: MediaQuery.of(context).size.width - 40,
                 height: 30,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(8),
@@ -81,19 +92,25 @@ class _LoadingPageState extends State<LoadingPage> {
                   children: [
                     Container(
                       height: 30,
-                      width: MediaQuery.of(context).size.width*(time/100)-40,
-                      decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(8),
-                          bottomRight: Radius.circular(8)),
+                      width: time >= 90
+                          ? MediaQuery.of(context).size.width * (time / 100) -
+                              40
+                          : MediaQuery.of(context).size.width * (time / 100),
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8)),
+                      ),
                     ),
-                    ),
-                    Expanded(child: Container(color: Colors.white,))
+                    Expanded(
+                        child: Container(
+                      color: Colors.white,
+                    ))
                   ],
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 15,
               ),
               Container(
@@ -108,21 +125,21 @@ class _LoadingPageState extends State<LoadingPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           const Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "Name",
+                                "Utkarsh",
                                 style: TextStyle(
                                     color: Color(0xff101A29),
                                     fontSize: 18,
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                "Utkarsh",
+                                "+91 9341246568",
                                 style: TextStyle(
                                   color: Color(0xff4A4A4A),
                                 ),
@@ -130,16 +147,21 @@ class _LoadingPageState extends State<LoadingPage> {
                             ],
                           ),
                           Expanded(child: Container()),
-                          Container(
-                            height: 40,
-                            width: 40,
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: const Icon(
-                              Icons.phone,
-                              color: Color(0xff4A4A4A),
+                          GestureDetector(
+                            onTap: () {
+                              launch("tel://9341246568");
+                            },
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.black),
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(20))),
+                              child: const Icon(
+                                Icons.phone,
+                                color: Color(0xff4A4A4A),
+                              ),
                             ),
                           )
                         ],
@@ -163,53 +185,64 @@ class _LoadingPageState extends State<LoadingPage> {
                       padding: const EdgeInsets.all(8.0),
                       child: Row(
                         children: [
-                          SizedBox(
+                          const SizedBox(
                             width: 10,
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
+                              const Text(
                                 "Filled",
                                 style: TextStyle(
                                   color: Color(0xff4A4A4A),
                                 ),
                               ),
                               Text(
-                                "12/14 tons",
+                                "${((time / 100) * 14).toStringAsFixed(2)}/14 ton",
                                 style: TextStyle(
                                     color: Color(0xff101A29),
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold),
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 height: 10,
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width - 100,
-                                padding: EdgeInsets.all(8),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Icon(
-                                        Icons.check,
-                                        color: Colors.white,
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        "FILLED",
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ],
+                              GestureDetector(
+                                onTap: () {
+                                  if (time >= 100) {
+                                    nextScreenReplace(context, MovingPage());
+                                  }
+                                },
+                                child: Container(
+                                  width:
+                                      MediaQuery.of(context).size.width - 100,
+                                  padding: const EdgeInsets.all(8),
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Icon(
+                                          Icons.check,
+                                          color: Colors.white,
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text(
+                                          "FILLED",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ],
+                                    ),
                                   ),
+                                  decoration: BoxDecoration(
+                                      color: time >= 100
+                                          ? Color(0xff101A29)
+                                          : Colors.grey,
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5))),
                                 ),
-                                decoration: BoxDecoration(
-                                    color: Color(0xff101A29),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5))),
                               )
                             ],
                           ),
@@ -228,8 +261,8 @@ class _LoadingPageState extends State<LoadingPage> {
                 },
                 child: Container(
                   width: MediaQuery.of(context).size.width - 40,
-                  padding: EdgeInsets.all(8),
-                  child: Center(
+                  padding: const EdgeInsets.all(8),
+                  child: const Center(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -248,7 +281,7 @@ class _LoadingPageState extends State<LoadingPage> {
                       ],
                     ),
                   ),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.all(Radius.circular(5))),
                 ),
@@ -265,7 +298,7 @@ class _LoadingPageState extends State<LoadingPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Center(
+            title: const Center(
                 child: Text(
               "ALERT",
               style: TextStyle(color: Color(0xff101A29)),
@@ -273,9 +306,9 @@ class _LoadingPageState extends State<LoadingPage> {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
+                const Text(
                     "Looks like something paused your progress. Need a hand getting back on track?"),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
                 GestureDetector(
@@ -283,30 +316,32 @@ class _LoadingPageState extends State<LoadingPage> {
                     Navigator.pop(context);
                   },
                   child: Container(
-                    padding: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
+                    padding: const EdgeInsets.all(10),
+                    decoration: const BoxDecoration(
                         color: Color(0xff101A29),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: Center(
+                    child: const Center(
                         child: Text(
                       "DISMISS",
                       style: TextStyle(color: Colors.white),
                     )),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 15,
                 ),
                 GestureDetector(
                   onTap: () {
                     Navigator.pop(context);
+                    nextScreen(context, HelpPage());
                   },
                   child: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                        border: Border.all(color: Color(0xff101A29)),
-                        borderRadius: BorderRadius.all(Radius.circular(5))),
-                    child: Center(child: Text("HELP & SUPPORT")),
+                        border: Border.all(color: const Color(0xff101A29)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(5))),
+                    child: const Center(child: Text("HELP & SUPPORT")),
                   ),
                 ),
               ],

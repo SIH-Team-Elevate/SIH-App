@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 
 import 'package:sih_app/database/Apis.dart';
 import 'package:sih_app/map_provider.dart';
+import 'package:sih_app/pages/authpage.dart';
+import 'package:sih_app/pages/getstarted.dart';
+import 'package:sih_app/pages/loading.dart';
 import 'package:sih_app/pages/moving.dart';
 
 void main() {
@@ -43,7 +46,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: MovingPage(),
+      home: GetStarted(),
     );
   }
 }

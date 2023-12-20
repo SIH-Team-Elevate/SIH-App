@@ -6,10 +6,15 @@ class MapProvider extends ChangeNotifier {
   int idx = 0;
   int total_points = 0;
   bool loading = true;
-
+  double volume = 1.0;
   double time_left = 0;
   void setLoading() {
     loading = false;
+  }
+
+  void setVol(double vol) {
+    volume = vol;
+    notifyListeners();
   }
 
   void changeIndex(int i, int points) {

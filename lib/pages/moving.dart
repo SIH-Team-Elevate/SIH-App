@@ -22,7 +22,8 @@ class _MovingPageState extends State<MovingPage> {
     double time = context.watch<MapProvider>().time_left;
     double distance = context.watch<MapProvider>().distance;
     int tp = context.watch<MapProvider>().total_points;
-    int idx= context.watch<MapProvider>().idx;
+    int idx = context.watch<MapProvider>().idx;
+    double vol = context.watch<MapProvider>().volume;
 
     return Scaffold(
       backgroundColor: const Color(0xffEFEFEF),
@@ -92,26 +93,35 @@ class _MovingPageState extends State<MovingPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "${time ~/ 60} min",
+                          "${(time / 60).toStringAsFixed(1)} min",
                           style: TextStyle(
                               color: Color(
                                 0xff101A29,
                               ),
                               fontWeight: FontWeight.w600),
                         ),
-                        Text("${distance / 1000.truncate()} km . 4:35 PM"),
+                        Text("${(distance / 1000).toStringAsFixed(2)} km . 4:35 PM"),
                       ],
                     ),
-                    Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(20))),
-                      child: const Icon(
-                        Icons.mic_none_outlined,
-                        color: Color(0xff4A4A4A),
+                    GestureDetector(
+                      onTap: () {
+                        if (vol == 0.0) {
+                          Provider.of<MapProvider>(context,listen: false).setVol(1.0);
+                        }else{
+                          Provider.of<MapProvider>(context,listen: false).setVol(0.0);
+                        }
+                      },
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(20))),
+                        child: vol == 0.0?Icon(Icons.mic_off): Icon(
+                          Icons.mic_none_outlined,
+                          color: Color(0xff4A4A4A),
+                        ),
                       ),
                     )
                   ],
@@ -156,9 +166,8 @@ class _MovingPageState extends State<MovingPage> {
                               ),
                               GestureDetector(
                                 onTap: () {
-                                  if(idx==tp){
-
-                                  nextScreenReplace(context, LoadingPage());
+                                  if (idx == tp) {
+                                    nextScreenReplace(context, LoadingPage());
                                   }
                                 },
                                 child: Container(
@@ -184,8 +193,10 @@ class _MovingPageState extends State<MovingPage> {
                                       ],
                                     ),
                                   ),
-                                  decoration:  BoxDecoration(
-                                      color:tp==idx? Color(0xff101A29):Colors.grey,
+                                  decoration: BoxDecoration(
+                                      color: tp == idx
+                                          ? Color(0xff101A29)
+                                          : Colors.grey,
                                       borderRadius:
                                           BorderRadius.all(Radius.circular(5))),
                                 ),

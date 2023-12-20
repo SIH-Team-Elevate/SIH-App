@@ -12,6 +12,7 @@ class SocketClient {
     socket!.connect().onConnect((data) => print("kk"));
     socket!.onConnectError((err) => print("error-------"+err));
     socket!.onError((err) => print("error-------"+err));
+    
   }
 
   static SocketClient get instance {

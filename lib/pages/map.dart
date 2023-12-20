@@ -34,6 +34,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   int idx = 0;
   List<int> list_idx = [0];
   int pre_index = 0;
+  double distance_travelled = 0;
+  double time_taken = 0;
 
   Future<bool> getCoordniates() async {
     var res = await http.get(getRouteUrl("77.1728,28.5257", "77.1828,28.5257"));
@@ -130,6 +132,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
   final flutterTts = FlutterTts();
   Future<void> systemSpeak(String content) async {
+    double volume = Provider.of<MapProvider>(context,listen: false).volume;
+    await flutterTts.setVolume(volume);
     await flutterTts.speak(content);
   }
 
@@ -137,8 +141,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   void initState() {
     getCoordniates().then((value) => {
           timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-            socketMethods.sendlocation(
-                points[idx].latitude, points[idx].longitude, "njbjbjka");
+            
             idx++;
             if (idx > points.length - 1) {
               timer.cancel();
@@ -150,10 +153,20 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             var i = findinsertIndex(idx);
 
             if (pre_index != i && i <= instructions.length - 1) {
+              distance -= instructions[pre_index]['distance'];
+              time -= instructions[pre_index]['duration'];
               pre_index = i;
               Provider.of<MapProvider>(context, listen: false).setInstruction(
                   instructions[pre_index]["instruction"], time, distance);
               systemSpeak(instructions[pre_index]["instruction"]);
+            }
+            if(idx== points.length - 1){
+              socketMethods.sendData(
+                points[idx].longitude, points[idx].latitude, "njbjbjka",true,distance,time);
+            }else{
+
+            socketMethods.sendData(
+                points[idx].longitude, points[idx].latitude, "njbjbjka",false,distance,time);
             }
             setState(() {});
             Provider.of<MapProvider>(context, listen: false).setLoading();
